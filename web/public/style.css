@@ -1,0 +1,46 @@
+body {
+	font-family: Lucida Grande, Arial, sans-serif;
+	font-size: 14px;
+	text-align: center;
+	margin: 0;
+	padding: 0;
+	background-color: #052e66;
+	color: white;
+}
+
+table td, table tr {
+	margin: 0;
+}
+
+table td {
+	border: solid black 1px;
+	padding-left: 3px;
+	padding-right: 3px;
+}
+
+.server {
+	font-weight: bold;
+}
+
+.online {
+	color: green;
+}
+
+.offline {
+	color: red;
+}
+
+#status-table {
+	margin: 0 auto;
+}
+
+.heading {
+	width: 100%;
+	text-align: center;
+}
+
+.footing {
+	margin-top: 20px;
+	font-style: italic;
+	font-size: 12px;
+}
