@@ -19,4 +19,10 @@
 *.exe
 *.out
 *.app
+/daemon/uptimed
+
+# Meta files
 /daemon/.depend
+
+# IDE Workspaces
+nbproject
