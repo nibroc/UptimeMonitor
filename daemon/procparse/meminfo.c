@@ -1,7 +1,6 @@
-
 #include "meminfo.h"
 
-#include <cstdio>
+#include <stdio.h>
 
 int meminfo(struct MemInfo* mem)
 {
@@ -15,16 +14,17 @@ int meminfo(struct MemInfo* mem)
 		return 1;
 	}
 
-	matched = std::fscanf(f, "%*s %d", &mem->total);
+	matched = fscanf(f, "%*s %d", &mem->total);
 
 	/* Astoudingly lazy way to gobble the rest of the line... */
-	if (!std::fgets(buf, 128, f)) {
+	if (!fgets(buf, 128, f)) {
+		fclose(f);
 		return 3;
 	}
 
-	matched += std::fscanf(f, "%*s %d", &mem->free);
+	matched += fscanf(f, "%*s %d", &mem->free);
 
-	std::fclose(f);
+	fclose(f);
 
 	if (matched == 2) {
 		return 0;

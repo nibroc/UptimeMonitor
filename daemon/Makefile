@@ -1,16 +1,22 @@
-CC=gcc
-CXX=g++
-RM=rm -f
 CXXFLAGS=-Wall -pedantic -O3
+
 LDLIBS=-lcurl -lrt
 
-SRCS=uptimed.cpp post.cpp procparse/hostname.cpp procparse/loadavg.cpp procparse/meminfo.cpp procparse/uptime.cpp
-OBJS=$(subst .cpp,.o,$(SRCS))
+RM=rm -f
+
+PROCPARSE_SRCS=procparse/hostname.c procparse/loadavg.c procparse/meminfo.c procparse/uptime.c
+PROCPARSE_OBJS=$(subst .c,.o,$(PROCPARSE_SRCS))
+
+DAEMON_SRCS=uptimed.cpp post.cpp
+DAEMON_OBJS=$(subst .cpp,.o,$(DAEMON_SRCS))
+
+SRCS=$(PROCPARSE_SRCS) $(DAEMON_SRCS)
+OBJS=$(PROCPARSE_OBJS) $(DAEMON_OBJS)
 
 all: uptimed
 
 uptimed: $(OBJS)
-	g++ $(LDFLAGS) -o uptimed $(OBJS) $(LDLIBS) 
+	$(CXX) $(CXXFLAGS) $(LDFLAGS) -o uptimed $(OBJS) $(LDLIBS)
 
 depend: .depend
 
