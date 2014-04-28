@@ -1,19 +1,13 @@
 #include "hostname.h"
 
-#include <stdio.h>
+#include <unistd.h>
 
-int hostname(char* hn, int mlen)
+int hostname(char* hn, size_t len)
 {
-
-	FILE* f = fopen("/etc/hostname", "r");
-
-	if (1 == fscanf(f, "%s", hn)) {
-		fclose(f);
+	if (gethostname(hn, len) == 0) {
 		return 0;
+	} else {
+		/* Check errno */
+		return 1;
 	}
-
-	fclose(f);
-
-	return 1;
-
 }

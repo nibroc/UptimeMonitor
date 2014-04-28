@@ -1,31 +1,23 @@
-CXXFLAGS=-Wall -pedantic -O3
-
+CFLAGS=-Wall -Wextra -pedantic -std=gnu11
 LDLIBS=-lcurl -lrt
-
 RM=rm -f
 
-PROCPARSE_SRCS=procparse/hostname.c procparse/loadavg.c procparse/meminfo.c procparse/uptime.c
-PROCPARSE_OBJS=$(subst .c,.o,$(PROCPARSE_SRCS))
+SRCS=uptimed.c post.c procparse/hostname.c procparse/loadavg.c procparse/meminfo.c procparse/uptime.c
+OBJS=$(subst .c,.o,$(SRCS))
 
-DAEMON_SRCS=uptimed.cpp post.cpp
-DAEMON_OBJS=$(subst .cpp,.o,$(DAEMON_SRCS))
+all: build
 
-SRCS=$(PROCPARSE_SRCS) $(DAEMON_SRCS)
-OBJS=$(PROCPARSE_OBJS) $(DAEMON_OBJS)
-
-all: uptimed
-
-uptimed: $(OBJS)
-	$(CXX) $(CXXFLAGS) $(LDFLAGS) -o uptimed $(OBJS) $(LDLIBS)
+build: $(OBJS)
+	$(CC) $(CFLAGS) $(LDFLAGS) -o uptimed $(OBJS) $(LDLIBS)
 
 depend: .depend
 
 .depend: $(SRCS)
 	rm -f ./.depend
-	$(CXX) $(CPPFLAGS) -MM $^>>./.depend;
+	$(CC) $(CFLAGS) -MM $^>>./.depend;
 
 clean:
-	$(RM) $(OBJS)
+	$(RM) uptimed $(OBJS)
 
 dist-clean: clean
 	$(RM) *~ .dependtool

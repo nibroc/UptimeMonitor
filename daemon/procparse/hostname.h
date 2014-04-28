@@ -5,7 +5,9 @@
 extern "C" {
 #endif
 
-int hostname(char* hn, int mlen);
+#include <stddef.h>
+
+int hostname(char* hn, size_t len);
 
 #ifdef __cplusplus
 }

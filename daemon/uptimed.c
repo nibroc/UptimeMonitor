@@ -1,19 +1,19 @@
-#include <cstdio>
-#include <unistd.h>
-#include <cstdlib>
-#include <cstring>
-#include <getopt.h>
-
-#include <ctime>
-
-#include <curl/curl.h>
-
 #include "post.h"
 
 #include "procparse/uptime.h"
 #include "procparse/loadavg.h"
 #include "procparse/meminfo.h"
 #include "procparse/hostname.h"
+
+#include <stdio.h>
+#include <unistd.h>
+#include <limits.h>
+#include <stdlib.h>
+#include <string.h>
+#include <time.h>
+#include <getopt.h>
+
+#include <curl/curl.h>
 
 struct MemoryStruct {
 	char* memory;
@@ -31,8 +31,6 @@ const char usageMessage[] =
 
 const char versionMessage[] = "uptimed version 0.1 by Corbin Hughes\n";
 
-using namespace std;
-
 int main(int argc, char** argv)
 {
 
@@ -43,7 +41,6 @@ int main(int argc, char** argv)
 
 	/* Repeat every 180 seconds by default */
 	int interval = 180;
-	double dinterval;
 
 	int silent = 0;
 
@@ -57,7 +54,7 @@ int main(int argc, char** argv)
 	struct timespec end;
 	double tdiff;
 
-	char host[128];
+	char host[256];
 
 	while (-1 != (opt = getopt(argc, argv, "t:svhr:i:"))) {
 		switch (opt) {
@@ -89,9 +86,9 @@ int main(int argc, char** argv)
 		return 1;
 	}
 
-	dinterval = (double) interval;
+	double dinterval = (double) interval;
 
-	hostname(host, 128);
+	hostname(host, sizeof(host));
 
 	curl_global_init(CURL_GLOBAL_NOTHING);
 
