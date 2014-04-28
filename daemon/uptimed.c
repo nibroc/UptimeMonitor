@@ -15,47 +15,30 @@
 
 #include <curl/curl.h>
 
-struct MemoryStruct {
-	char* memory;
-	size_t size;
-};
-
 const char usageMessage[] =
-"usage: uptimed [options]\n"
-"  -t -- target url to post data to [example: http://someesite.com/page.php?token=blah]\n"
-"  -h -- show this message and exit\n"
-"  -v -- show version and exit\n"
-"  -r num -- repeat num times and exit [default -1 = repeat forever]\n"
-"  -i int -- the time to pause before shooting off another request\n"
-"  -s -- suppress messages\n";
+	"usage: uptimed [options]\n"
+	"  -t -- target url to post data to [example: http://someesite.com/page.php?token=blah]\n"
+	"  -h -- show this message and exit\n"
+	"  -v -- show version and exit\n"
+	"  -r num -- repeat num times and exit [default -1 = repeat forever]\n"
+	"  -i int -- the time to pause before shooting off another request\n"
+	"  -s -- suppress messages\n";
 
 const char versionMessage[] = "uptimed version 0.1 by Corbin Hughes\n";
 
 int main(int argc, char** argv)
 {
-
-	int opt;
-
 	/* Count -1 means forever */
 	int count = -1;
 
 	/* Repeat every 180 seconds by default */
-	int interval = 180;
+	int repeat_seconds = 180;
 
 	int silent = 0;
 
 	char* url = NULL;
 
-	struct Uptime up;
-	struct MemInfo mem;
-	struct LoadAvg avg;
-
-	struct timespec start;
-	struct timespec end;
-	double tdiff;
-
-	char host[256];
-
+	int opt;
 	while (-1 != (opt = getopt(argc, argv, "t:svhr:i:"))) {
 		switch (opt) {
 			case 't':
@@ -65,17 +48,17 @@ int main(int argc, char** argv)
 				count = atoi(optarg);
 				break;
 			case 'i':
-				interval = atoi(optarg);
+				repeat_seconds = atoi(optarg);
 				break;
 			case 's':
 				silent = 1;
 				break;
 			case 'v':
-				fwrite(versionMessage, sizeof(char), strlen(versionMessage), stderr);
+				fputs(versionMessage, stderr);
 				return 1;
 			case 'h':
 			default:
-				fwrite(usageMessage, sizeof(char), strlen(usageMessage), stderr);
+				fputs(usageMessage, stderr);
 				return 1;
 		}
 	}
@@ -86,21 +69,26 @@ int main(int argc, char** argv)
 		return 1;
 	}
 
-	double dinterval = (double) interval;
-
-	hostname(host, sizeof(host));
+	char host[256];
+	if (hostname(host, sizeof(host))) {
+		fprintf(stderr, "Could not read hostname\n");
+		exit(EXIT_FAILURE);
+	}
 
 	curl_global_init(CURL_GLOBAL_NOTHING);
 
 	do {
-
+		struct Uptime up;
 		uptime(&up);
+
+		struct MemInfo mem;
 		meminfo(&mem);
+
+		struct LoadAvg avg;
 		loadavg(&avg);
 
 		if (!silent) {
-			fprintf(
-				stderr,
+			printf(
 				"%s %.0f/%.0f %d/%d %.2f %.2f %.2f %d/%d\n",
 				host, up.total, up.idle,
 				mem.free, mem.total,
@@ -113,24 +101,23 @@ int main(int argc, char** argv)
 			--count;
 		}
 
+		struct timespec start, end;
+
 		clock_gettime(CLOCK_MONOTONIC, &start);
 
 		post(url, host, &up, &mem, &avg);
 
 		clock_gettime(CLOCK_MONOTONIC, &end);
 
-		tdiff = ((double) (end.tv_sec - start.tv_sec)) + ( ((double)(end.tv_nsec - start.tv_nsec)) / 1000000000 );
-
 		if (count == 0) {
 			break;
 		}
 
-		usleep((dinterval - tdiff) * 1000000 );
-
+		double tdiff = ((double) (end.tv_sec - start.tv_sec)) + ( ((double)(end.tv_nsec - start.tv_nsec)) / 1000000000);
+		usleep((repeat_seconds - tdiff) * 1000000 );
 	} while(1);
 
 	curl_global_cleanup();
 
 	return 0;
-
 }
