@@ -28,7 +28,7 @@ const char versionMessage[] = "uptimed version 0.1 by Corbin Hughes\n";
 
 int main(int argc, char** argv)
 {
-	/* Count -1 means forever */
+	/* Count -1 means repeat forever */
 	int count = -1;
 
 	/* Repeat every 180 seconds by default */
@@ -55,27 +55,27 @@ int main(int argc, char** argv)
 				break;
 			case 'v':
 				fputs(versionMessage, stderr);
-				return 1;
+				return EXIT_SUCCESS;
 			case 'h':
 			default:
 				fputs(usageMessage, stderr);
-				return 1;
+				return EXIT_SUCCESS;
 		}
 	}
 
 	if (url == NULL) {
 		fprintf(stderr, "Error: You must provide the -t url option\n");
 		fprintf(stderr, "%s", usageMessage);
-		return 1;
+		return EXIT_FAILURE;
 	}
 
 	char host[256];
 	if (hostname(host, sizeof(host))) {
 		fprintf(stderr, "Could not read hostname\n");
-		exit(EXIT_FAILURE);
+		return EXIT_FAILURE;
 	}
 
-	curl_global_init(CURL_GLOBAL_NOTHING);
+	curl_global_init(CURL_GLOBAL_ALL);
 
 	do {
 		struct Uptime up;
