@@ -51,14 +51,11 @@ static void quick_formaddf(struct curl_httppost** frm, struct curl_httppost** lp
 }
 
 int post(const char* url, const char* host, const struct Uptime* up, const struct MemInfo* mem, const struct LoadAvg* avg) {
-	CURL *curl;
-	CURLcode res;
-
 	struct MemoryStruct memst;
 	struct curl_httppost *formpost = NULL;
 	struct curl_httppost *lastptr = NULL;
 
-	curl = curl_easy_init();
+	CURL* curl = curl_easy_init();
 
 	quick_formadds(&formpost, &lastptr, "hostname", host);
 	quick_formaddf(&formpost, &lastptr, "uptime[total]", up->total);
@@ -74,9 +71,7 @@ int post(const char* url, const char* host, const struct Uptime* up, const struc
 	if (curl) {
 		curl_easy_setopt(curl, CURLOPT_URL, url);
 		curl_easy_setopt(curl, CURLOPT_HTTPPOST, formpost);
-
-		curl_easy_setopt(curl, CURLOPT_USERAGENT, "uptimed/0.1");
-
+		curl_easy_setopt(curl, CURLOPT_USERAGENT, "uptimed http://github.com/nibroc/UptimeMonitor/");
 		curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, &WriteMemoryCallback);
 
 		memst.memory = (char*) malloc(1);
@@ -90,7 +85,7 @@ int post(const char* url, const char* host, const struct Uptime* up, const struc
 
 		curl_easy_setopt(curl, CURLOPT_WRITEDATA, &memst);
 
-		res = curl_easy_perform(curl);
+		CURLcode res = curl_easy_perform(curl);
 
 		curl_easy_cleanup(curl);
 
