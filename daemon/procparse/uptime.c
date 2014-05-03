@@ -5,23 +5,19 @@
 
 int uptime(struct Uptime* up)
 {
-	
-	int matched;
-	
 	FILE* f = fopen("/proc/uptime", "r");
-	
+
 	if (f == NULL) {
-		return 1;
+		return PROCPARSE_ERR_FILEOPEN;
 	}
-	
-	matched = fscanf(f, "%lf %lf", &up->total, &up->idle);
-	
+
+	int matched = fscanf(f, "%lf %lf", &up->total, &up->idle);
+
 	fclose(f);
-	
+
 	if (matched == 2) {
-		return 0;
+		return PROCPARSE_SUCCESS;
 	}
-	
-	return 2;
-	
+
+	return PROCPARSE_ERR_PARSE;
 }

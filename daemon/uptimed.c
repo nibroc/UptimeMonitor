@@ -17,14 +17,14 @@
 
 const char usageMessage[] =
 	"usage: uptimed [options]\n"
-	"  -t -- target url to post data to [example: http://someesite.com/page.php?token=blah]\n"
+	"  -t -- target url to post data to [example: http://blah.tld/page.php?token=blah]\n"
 	"  -h -- show this message and exit\n"
 	"  -v -- show version and exit\n"
 	"  -r num -- repeat num times and exit [default -1 = repeat forever]\n"
 	"  -i int -- the time to pause before shooting off another request\n"
 	"  -s -- suppress messages\n";
 
-const char versionMessage[] = "uptimed version 0.1 by Corbin Hughes\n";
+const char versionMessage[] = "uptimed version 0.1 by Corbin Hughes (http://github.com/nibroc/)\n";
 
 int main(int argc, char** argv) {
 	/* Count -1 means repeat forever */

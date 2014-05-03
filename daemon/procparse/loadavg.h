@@ -1,5 +1,7 @@
-#ifndef __PP_LOADAVG_H
-#define __PP_LOADAVG_H
+#ifndef PROCPARSE_LOADAVG_H
+#define PROCPARSE_LOADAVG_H
+
+#include "procparse.h"
 
 #ifdef __cplusplus
 extern "C" {

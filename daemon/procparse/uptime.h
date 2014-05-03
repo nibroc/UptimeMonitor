@@ -1,5 +1,7 @@
-#ifndef __PP_UPTIME_H
-#define __PP_UPTIME_H
+#ifndef PROCPARSE_UPTIME_H
+#define PROCPARSE_UPTIME_H
+
+#include "procparse.h"
 
 #ifdef __cplusplus
 extern "C" {

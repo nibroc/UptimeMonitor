@@ -1,5 +1,7 @@
-#ifndef __PP_MEMINFO_H
-#define __PP_MEMINFO_H
+#ifndef PROCPARSE_MEMINFO_H
+#define PROCPARSE_MEMINFO_H
+
+#include "procparse.h"
 
 #ifdef __cplusplus
 extern "C" {
