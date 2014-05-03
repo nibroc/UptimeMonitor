@@ -1,5 +1,5 @@
-#ifndef __POST_H_
-#define __POST_H_
+#ifndef UPMON_POST_H
+#define UPMON_POST_H
 
 #include "procparse/hostname.h"
 #include "procparse/meminfo.h"
