@@ -2,8 +2,7 @@
 
 #include <unistd.h>
 
-int hostname(char* hn, size_t len)
-{
+int hostname(char* hn, size_t len) {
 	if (gethostname(hn, len) == 0) {
 		return 0;
 	} else {

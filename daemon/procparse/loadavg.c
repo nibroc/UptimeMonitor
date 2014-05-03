@@ -3,9 +3,7 @@
 
 #include "stdio.h"
 
-int loadavg(struct LoadAvg* avg)
-{
-
+int loadavg(struct LoadAvg* avg) {
 	int matched;
 
 	FILE* f = fopen("/proc/loadavg", "r");

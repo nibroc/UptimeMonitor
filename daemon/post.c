@@ -10,9 +10,7 @@ struct MemoryStruct {
 	size_t size;
 };
 
-static size_t WriteMemoryCallback(void* contents, size_t size, size_t nmemb, void* userp)
-{
-
+static size_t WriteMemoryCallback(void* contents, size_t size, size_t nmemb, void* userp) {
 	size_t realsize = size * nmemb;
 
 	struct MemoryStruct *mem = (struct MemoryStruct *)userp;
@@ -34,30 +32,25 @@ static size_t WriteMemoryCallback(void* contents, size_t size, size_t nmemb, voi
 	mem->memory[mem->size] = 0;
 
 	return realsize;
-
 }
 
-static void quick_formadds(struct curl_httppost** frm, struct curl_httppost** lp, const char* key, const char* val)
-{
+static void quick_formadds(struct curl_httppost** frm, struct curl_httppost** lp, const char* key, const char* val) {
 	curl_formadd(frm, lp, CURLFORM_COPYNAME, key, CURLFORM_COPYCONTENTS, val, CURLFORM_END);
 }
 
-static void quick_formaddi(struct curl_httppost** frm, struct curl_httppost** lp, const char* key, long int val)
-{
+static void quick_formaddi(struct curl_httppost** frm, struct curl_httppost** lp, const char* key, long int val) {
 	char buf[24];
 	sprintf(buf, "%ld", val);
 	quick_formadds(frm, lp, key, buf);
 }
 
-static void quick_formaddf(struct curl_httppost** frm, struct curl_httppost** lp, const char* key, double val)
-{
+static void quick_formaddf(struct curl_httppost** frm, struct curl_httppost** lp, const char* key, double val) {
 	char buf[64];
 	sprintf(buf, "%f", val);
 	quick_formadds(frm, lp, key, buf);
 }
 
-int post(const char* url, const char* host, const struct Uptime* up, const struct MemInfo* mem, const struct LoadAvg* avg)
-{
+int post(const char* url, const char* host, const struct Uptime* up, const struct MemInfo* mem, const struct LoadAvg* avg) {
 	CURL *curl;
 	CURLcode res;
 
@@ -77,7 +70,6 @@ int post(const char* url, const char* host, const struct Uptime* up, const struc
 	quick_formaddf(&formpost, &lastptr, "load[l15]", avg->load15);
 	quick_formaddi(&formpost, &lastptr, "load[runningProcs]", avg->runningProcs);
 	quick_formaddi(&formpost, &lastptr, "load[totalProcs]", avg->totalProcs);
-
 
 	if (curl) {
 		curl_easy_setopt(curl, CURLOPT_URL, url);

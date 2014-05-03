@@ -26,8 +26,7 @@ const char usageMessage[] =
 
 const char versionMessage[] = "uptimed version 0.1 by Corbin Hughes\n";
 
-int main(int argc, char** argv)
-{
+int main(int argc, char** argv) {
 	/* Count -1 means repeat forever */
 	int count = -1;
 
