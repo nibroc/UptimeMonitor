@@ -5,7 +5,14 @@ RM=rm -f
 SRCS=uptimed.c post.c procparse/hostname.c procparse/loadavg.c procparse/meminfo.c procparse/uptime.c
 OBJS=$(subst .c,.o,$(SRCS))
 
-all: build
+all: release
+
+release: CFLAGS=-O3
+release: build
+
+debug: CFLAGS=-O0 -g
+debug: LDFLAGS=-O0 -g
+debug: build
 
 build: $(OBJS)
 	$(CC) $(CFLAGS) $(LDFLAGS) -o uptimed $(OBJS) $(LDLIBS)
