@@ -1,5 +1,5 @@
 CFLAGS=-Wall -Wextra -pedantic -std=gnu11
-LDLIBS=-lcurl -lrt
+LDLIBS=-lcurl
 RM=rm -f
 
 SRCS=uptimed.c post.c procparse/hostname.c procparse/loadavg.c procparse/meminfo.c procparse/uptime.c
