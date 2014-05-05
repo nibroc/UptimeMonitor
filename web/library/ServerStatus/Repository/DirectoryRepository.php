@@ -14,7 +14,7 @@ namespace ServerStatus\Repository {
 		public function __construct($directory, $fileExtension = '')
 		{
 			if (!is_dir($directory)) {
-				throw new \Exception("Invalid directory");
+				throw new \Exception("Invalid directory: [{$directory}]");
 			}
 			$this->_directory = $directory;
 			$this->_fileExtension = $fileExtension;
