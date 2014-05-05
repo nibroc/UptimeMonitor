@@ -6,11 +6,11 @@ namespace ServerStatus\Repository {
 	{
 
 		private $_directory;
-		
+
 		private $_fileExtension;
-		
+
 		private $_servers = null;
-		
+
 		public function __construct($directory, $fileExtension = '')
 		{
 			if (!is_dir($directory)) {
@@ -19,7 +19,7 @@ namespace ServerStatus\Repository {
 			$this->_directory = $directory;
 			$this->_fileExtension = $fileExtension;
 		}
-		
+
 		public function getServerList()
 		{
 			if (null === $this->_servers)
@@ -30,9 +30,7 @@ namespace ServerStatus\Repository {
 				}
 				$this->_servers = array();
 				while (false !== ($fn = readdir($dh))) {
-					if ($fn == '.' || $fn == '..') {
-						continue;
-					}
+					if ($this->isIgnoreFile($fn)) { continue; }
 					$path = $this->_directory . '/' . $fn;
 					if (is_file($path)) {
 						$this->_servers[] = $fn;
@@ -41,28 +39,22 @@ namespace ServerStatus\Repository {
 			}
 			return $this->_servers;
 		}
-		
+
 		public function getServerRecord($serverName)
 		{
 			if (!in_array($serverName, $this->getServerList())) {
 				throw new \Exception("Invalid server specified");
 			}
-			
 			$filepath = $this->getFileName($serverName);
-			
 			if (!file_exists($filepath) || !is_readable($filepath)) {
 				throw new \Exception("Unable to read file");
 			}
-			
 			$data = unserialize(file_get_contents($filepath));
-			
 			$timestamp = filemtime($filepath);
-			
 			$data['timestamp'] = $timestamp;
-			
 			return $data;
 		}
-		
+
 		public function getServerRecords()
 		{
 			$records = array();
@@ -71,23 +63,23 @@ namespace ServerStatus\Repository {
 			}
 			return $records;
 		}
-		
+
 		public function storeServerRecord($serverName, $record)
 		{
-			
 			if (!file_put_contents($this->getFileName($serverName), serialize($record))) {
 				throw new \Exception("Error storing record");
 			}
-			
 			return $this;
-			
 		}
-		
+
 		private function getFileName($serverName)
 		{
 			return sprintf("%s/%s%s", $this->_directory, $serverName, $this->_fileExtension);
 		}
 
+		private function isIgnoreFile($name)
+		{
+			return substr($name, 0, 1) === '.';
+		}
 	}
-	
 }

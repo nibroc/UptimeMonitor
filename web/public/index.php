@@ -4,7 +4,8 @@ require dirname(__FILE__) . '/../bootstrap.php';
 
 $memories = array(
 	'server1' => 256 * 1024,
-	'server2' => 512 * 1024
+	'server2' => 512 * 1024,
+	'lmxe' => 2048 * 1024
 );
 
 use \ServerStatus\Repository\DirectoryRepository;
