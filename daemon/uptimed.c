@@ -113,7 +113,9 @@ int main(int argc, char** argv) {
 		}
 
 		double tdiff = ((double) (end.tv_sec - start.tv_sec)) + ( ((double)(end.tv_nsec - start.tv_nsec)) / 1000000000);
-		usleep((repeat_seconds - tdiff) * 1000000 );
+		if (repeat_seconds > tdiff) {
+			usleep((repeat_seconds - tdiff) * 1000000 );
+		}
 	} while(1);
 
 	curl_global_cleanup();
