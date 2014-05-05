@@ -5,9 +5,28 @@
 #include <string.h>
 #include <curl/curl.h>
 
-static size_t write_func_ignore(void* contents, size_t size, size_t nmemb, void* userp) {
-	(void) contents; (void) userp; // Suppress unused argument warnings
-	return size * nmemb;
+typedef struct string_buffer {
+	char str[256];
+	size_t len;
+} string_buffer;
+
+static size_t write_func(void* contents, size_t size, size_t nmemb, void* userp) {
+	const size_t sz = size * nmemb;
+	if (sz == 0) { return sz; }
+
+	string_buffer* buf = userp;
+
+	// Copy as many bytes as we can
+	size_t cpy = sz;
+	if (buf->len + sz + 1 > sizeof(buf->str)) {
+		cpy = sizeof(buf->str) - 1 - buf->len;
+	}
+
+	memcpy(&buf->str[buf->len], contents, cpy);
+	buf->len += cpy;
+	buf->str[buf->len] = '\0';
+
+	return cpy;
 }
 
 static void quick_formadds(struct curl_httppost** frm, struct curl_httppost** lp, const char* key, const char* val) {
@@ -51,7 +70,10 @@ int post(const char* url, const char* host, const struct Uptime* up, const struc
 	curl_easy_setopt(curl, CURLOPT_URL, url);
 	curl_easy_setopt(curl, CURLOPT_HTTPPOST, formpost);
 	curl_easy_setopt(curl, CURLOPT_USERAGENT, "uptimed http://github.com/nibroc/UptimeMonitor/");
-	curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, &write_func_ignore);
+
+	string_buffer rs = {0};
+	curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, &write_func);
+	curl_easy_setopt(curl, CURLOPT_WRITEDATA, &rs);
 
 	CURLcode res = curl_easy_perform(curl);
 
@@ -59,5 +81,9 @@ int post(const char* url, const char* host, const struct Uptime* up, const struc
 
 	curl_formfree(formpost);
 
-	return res;
+	if (res == CURLE_OK) {
+		return strcmp(rs.str, "ok");
+	} else {
+		return 1;
+	}
 }
