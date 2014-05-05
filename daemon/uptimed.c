@@ -26,6 +26,12 @@ const char usageMessage[] =
 
 const char versionMessage[] = "uptimed version 0.1 by Corbin Hughes (http://github.com/nibroc/)\n";
 
+void do_or_die(int result, char* msg) {
+	if (!result) { return; }
+	fprintf(stderr, "Error: %s -- %s\n", msg, procparse_strerr(result));
+	exit(EXIT_FAILURE);
+}
+
 int main(int argc, char** argv) {
 	/* Count -1 means repeat forever */
 	int count = -1;
@@ -78,13 +84,11 @@ int main(int argc, char** argv) {
 
 	do {
 		struct Uptime up;
-		uptime(&up);
-
+		do_or_die(uptime(&up), "Could not get uptime");
 		struct MemInfo mem;
-		meminfo(&mem);
-
+		do_or_die(meminfo(&mem), "Could not get meminfo");
 		struct LoadAvg avg;
-		loadavg(&avg);
+		do_or_die(loadavg(&avg), "could not get loadavg");
 
 		if (!silent) {
 			printf(

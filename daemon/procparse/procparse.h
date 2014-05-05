@@ -15,6 +15,8 @@ enum procparse_result {
 	PROCPARSE_ERR_OTHER = 6
 };
 
+const char* procparse_strerr(enum procparse_result rc);
+
 #ifdef	__cplusplus
 }
 #endif
