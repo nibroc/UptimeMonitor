@@ -3,7 +3,7 @@
 #include <errno.h>
 #include <unistd.h>
 
-int hostname(char* hn, size_t len) {
+enum procparse_result hostname(char* hn, size_t len) {
 	if (gethostname(hn, len) == 0) {
 		return PROCPARSE_SUCCESS;
 	} else {
