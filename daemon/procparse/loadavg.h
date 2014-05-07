@@ -16,7 +16,7 @@ struct LoadAvg {
 	int lastProcId;
 };
 
-int loadavg(struct LoadAvg* avg);
+enum procparse_result loadavg(struct LoadAvg* avg);
 
 #ifdef __cplusplus
 }

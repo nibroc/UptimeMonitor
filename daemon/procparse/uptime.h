@@ -12,7 +12,7 @@ struct Uptime {
 	double idle;
 };
 
-int uptime(struct Uptime* up);
+enum procparse_result uptime(struct Uptime* up);
 
 #ifdef __cplusplus
 }

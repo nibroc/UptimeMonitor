@@ -12,7 +12,7 @@ struct MemInfo {
 	int free;
 };
 
-int meminfo(struct MemInfo* mem);
+enum procparse_result meminfo(struct MemInfo* mem);
 
 #ifdef __cplusplus
 }
