@@ -1,4 +1,4 @@
-#include "post.h"
+#include "notifier.h"
 
 #include "procparse/uptime.h"
 #include "procparse/loadavg.h"
@@ -12,8 +12,6 @@
 #include <string.h>
 #include <time.h>
 #include <getopt.h>
-
-#include <curl/curl.h>
 
 const char usageMessage[] =
 	"usage: uptimed [options]\n"
@@ -80,7 +78,7 @@ int main(int argc, char** argv) {
 		return EXIT_FAILURE;
 	}
 
-	curl_global_init(CURL_GLOBAL_ALL);
+	notifier* notify = notifier_create(url);
 
 	do {
 		struct Uptime up;
@@ -108,7 +106,7 @@ int main(int argc, char** argv) {
 
 		clock_gettime(CLOCK_MONOTONIC, &start);
 
-		post(url, host, &up, &mem, &avg);
+		notifier_send(notify, host, &avg, &mem, &up);
 
 		clock_gettime(CLOCK_MONOTONIC, &end);
 
@@ -122,7 +120,7 @@ int main(int argc, char** argv) {
 		}
 	} while(1);
 
-	curl_global_cleanup();
+	notifier_destroy(notify);
 
 	return 0;
 }

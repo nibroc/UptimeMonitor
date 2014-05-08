@@ -2,7 +2,7 @@ CFLAGS=-Wall -Wextra -pedantic -std=gnu11
 LDLIBS=-lcurl
 RM=rm -f
 
-SRCS=uptimed.c post.c procparse/hostname.c procparse/loadavg.c procparse/meminfo.c procparse/uptime.c procparse/procparse.c
+SRCS=uptimed.c notifier.c procparse/hostname.c procparse/loadavg.c procparse/meminfo.c procparse/uptime.c procparse/procparse.c
 OBJS=$(subst .c,.o,$(SRCS))
 
 all: release
