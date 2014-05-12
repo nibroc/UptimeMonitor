@@ -15,7 +15,7 @@
 
 const char usageMessage[] =
 	"usage: uptimed [options]\n"
-	"  -t -- target url to post data to [example: http://blah.tld/page.php?token=blah]\n"
+	"  -t -- target url to post data to [example: http://example.tld/api.php?token=blah]\n"
 	"  -h -- show this message and exit\n"
 	"  -v -- show version and exit\n"
 	"  -r num -- repeat num times and exit [default -1 = repeat forever]\n"
