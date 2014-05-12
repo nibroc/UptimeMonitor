@@ -104,8 +104,8 @@ static void quick_formaddf(struct curl_httppost** frm, struct curl_httppost** lp
 	quick_formadds(frm, lp, key, buf);
 }
 
-static struct curl_httppost* build_form(const char* host, const struct Uptime* up,
-		const struct MemInfo* mem, const struct LoadAvg* avg) {
+static struct curl_httppost* build_form(const char* host, const struct ProcParseUptime* up,
+		const struct ProcParseMemInfo* mem, const struct ProcParseLoadAvg* avg) {
 	struct curl_httppost* formpost = NULL;
 	struct curl_httppost* lastptr = NULL;
 	quick_formadds(&formpost, &lastptr, "hostname", host);
@@ -121,8 +121,8 @@ static struct curl_httppost* build_form(const char* host, const struct Uptime* u
 	return formpost;
 }
 
-int notifier_send(notifier* n, const char* host, struct LoadAvg* avg,
-					struct MemInfo* mem, struct Uptime* up)
+int notifier_send(notifier* n, const char* host, struct ProcParseLoadAvg* avg,
+					struct ProcParseMemInfo* mem, struct ProcParseUptime* up)
 {
 	struct curl_httppost* formpost = build_form(host, up, mem, avg);
 

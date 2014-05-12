@@ -9,7 +9,7 @@ extern "C" {
 
 #include <stddef.h>
 
-enum procparse_result hostname(char* hn, size_t len);
+enum procparse_result procparse_hostname(char* hn, size_t len);
 
 #ifdef __cplusplus
 }

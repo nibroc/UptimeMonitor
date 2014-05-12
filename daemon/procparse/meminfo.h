@@ -7,12 +7,12 @@
 extern "C" {
 #endif
 
-struct MemInfo {
+struct ProcParseMemInfo {
 	int total;
 	int free;
 };
 
-enum procparse_result meminfo(struct MemInfo* mem);
+enum procparse_result procparse_meminfo(struct ProcParseMemInfo* mem);
 
 #ifdef __cplusplus
 }

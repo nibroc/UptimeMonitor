@@ -15,8 +15,8 @@ notifier* notifier_create(const char* url);
 
 void notifier_destroy(notifier* n);
 
-int notifier_send(notifier* n, const char* host, struct LoadAvg* avg,
-					struct MemInfo* mem, struct Uptime* up);
+int notifier_send(notifier* n, const char* host, struct ProcParseLoadAvg* avg,
+					struct ProcParseMemInfo* mem, struct ProcParseUptime* up);
 
 #ifdef	__cplusplus
 }

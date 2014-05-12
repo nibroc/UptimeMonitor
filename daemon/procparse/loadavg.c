@@ -2,7 +2,7 @@
 
 #include "stdio.h"
 
-enum procparse_result loadavg(struct LoadAvg* avg) {
+enum procparse_result procparse_loadavg(struct ProcParseLoadAvg* avg) {
 	int matched;
 
 	FILE* f = fopen("/proc/loadavg", "r");

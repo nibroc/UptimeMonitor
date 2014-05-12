@@ -2,7 +2,7 @@
 
 #include <stdio.h>
 
-enum procparse_result meminfo(struct MemInfo* mem)
+enum procparse_result procparse_meminfo(struct ProcParseMemInfo* mem)
 {
 	FILE* f = fopen("/proc/meminfo", "r");
 

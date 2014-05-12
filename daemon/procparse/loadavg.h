@@ -7,7 +7,7 @@
 extern "C" {
 #endif
 
-struct LoadAvg {
+struct ProcParseLoadAvg {
 	float load1;
 	float load5;
 	float load15;
@@ -16,7 +16,7 @@ struct LoadAvg {
 	int lastProcId;
 };
 
-enum procparse_result loadavg(struct LoadAvg* avg);
+enum procparse_result procparse_loadavg(struct ProcParseLoadAvg* avg);
 
 #ifdef __cplusplus
 }

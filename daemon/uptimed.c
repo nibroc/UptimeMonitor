@@ -73,7 +73,7 @@ int main(int argc, char** argv) {
 	}
 
 	char host[256];
-	if (hostname(host, sizeof(host))) {
+	if (procparse_hostname(host, sizeof(host))) {
 		fprintf(stderr, "Could not read hostname\n");
 		return EXIT_FAILURE;
 	}
@@ -81,12 +81,12 @@ int main(int argc, char** argv) {
 	notifier* notify = notifier_create(url);
 
 	do {
-		struct Uptime up;
-		do_or_die(uptime(&up), "Could not get uptime");
-		struct MemInfo mem;
-		do_or_die(meminfo(&mem), "Could not get meminfo");
-		struct LoadAvg avg;
-		do_or_die(loadavg(&avg), "could not get loadavg");
+		struct ProcParseUptime up;
+		do_or_die(procparse_uptime(&up), "Could not get uptime");
+		struct ProcParseMemInfo mem;
+		do_or_die(procparse_meminfo(&mem), "Could not get meminfo");
+		struct ProcParseLoadAvg avg;
+		do_or_die(procparse_loadavg(&avg), "could not get loadavg");
 
 		if (!silent) {
 			printf(

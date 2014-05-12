@@ -3,7 +3,7 @@
 
 #include <stdio.h>
 
-enum procparse_result uptime(struct Uptime* up)
+enum procparse_result procparse_uptime(struct ProcParseUptime* up)
 {
 	FILE* f = fopen("/proc/uptime", "r");
 
