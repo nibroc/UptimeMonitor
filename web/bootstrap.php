@@ -8,4 +8,11 @@ spl_autoload_register(function ($class) {
 	return true;
 });
 
-define('REPO_PATH', realpath(__DIR__ . '/servers'));
+define('BASE_PATH', realpath(__DIR__));
+define('REPO_PATH', BASE_PATH . '/servers');
+
+$config = parse_ini_file(BASE_PATH . '/config.ini');
+
+if ($config === false) {
+	die("You must setup config.ini");
+}
