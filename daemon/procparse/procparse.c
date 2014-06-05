@@ -1,7 +1,7 @@
 #include "procparse.h"
 
+#include <assert.h>
 #include <stddef.h>
-
 #include <stdio.h>
 
 static const char* msg[] = {
@@ -15,8 +15,6 @@ static const char* msg[] = {
 };
 
 const char* procparse_strerr(enum procparse_result rc) {
-	if (rc >= 0 && rc < sizeof(msg) / sizeof(msg[0])) {
-		return msg[rc];
-	}
-	return NULL;
+	assert(rc >= 0 && rc < sizeof(msg) / sizeof(msg[0]));
+	return msg[rc];
 }
