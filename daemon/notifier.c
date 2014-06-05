@@ -121,7 +121,7 @@ static struct curl_httppost* build_form(const char* host, const struct ProcParse
 	return formpost;
 }
 
-int notifier_send(notifier* n, const char* host, struct ProcParseLoadAvg* avg,
+enum notifier_result notifier_send(notifier* n, const char* host, struct ProcParseLoadAvg* avg,
 					struct ProcParseMemInfo* mem, struct ProcParseUptime* up)
 {
 	struct curl_httppost* formpost = build_form(host, up, mem, avg);
@@ -139,8 +139,8 @@ int notifier_send(notifier* n, const char* host, struct ProcParseLoadAvg* avg,
 	curl_formfree(formpost);
 
 	if (res == CURLE_OK) {
-		return strcmp(rs.str, "ok");
+		return strcmp(rs.str, "ok") ? NOTIFIER_SUCCESS : NOTIFIER_ERR_RESPONSE;
 	} else {
-		return 1;
+		return NOTIFIER_ERR_CONNECTION;
 	}
 }
