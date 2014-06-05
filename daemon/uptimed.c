@@ -106,7 +106,7 @@ int main(int argc, char** argv) {
 
 		clock_gettime(CLOCK_MONOTONIC, &start);
 
-		notifier_send(notify, host, &avg, &mem, &up);
+		notifier_send(notify, &avg, &mem, &up);
 
 		clock_gettime(CLOCK_MONOTONIC, &end);
 

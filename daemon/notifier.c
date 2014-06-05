@@ -121,10 +121,10 @@ static struct curl_httppost* build_form(const char* host, const struct ProcParse
 	return formpost;
 }
 
-enum notifier_result notifier_send(notifier* n, const char* host, struct ProcParseLoadAvg* avg,
+enum notifier_result notifier_send(notifier* n, struct ProcParseLoadAvg* avg,
 					struct ProcParseMemInfo* mem, struct ProcParseUptime* up)
 {
-	struct curl_httppost* formpost = build_form(host, up, mem, avg);
+	struct curl_httppost* formpost = build_form(n->url, up, mem, avg);
 
 	curl_easy_setopt(n->curl, CURLOPT_URL, n->url);
 	curl_easy_setopt(n->curl, CURLOPT_HTTPPOST, formpost);

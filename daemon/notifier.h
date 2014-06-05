@@ -21,7 +21,7 @@ notifier* notifier_create(const char* url);
 
 void notifier_destroy(notifier* n);
 
-enum notifier_result notifier_send(notifier* n, const char* host, struct ProcParseLoadAvg* avg,
+enum notifier_result notifier_send(notifier* n, struct ProcParseLoadAvg* avg,
 									struct ProcParseMemInfo* mem, struct ProcParseUptime* up);
 
 #ifdef	__cplusplus
