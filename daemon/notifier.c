@@ -1,4 +1,5 @@
 #include "notifier.h"
+#include "string_buffer.h"
 
 #include <curl/curl.h>
 
@@ -64,28 +65,13 @@ void notifier_destroy(notifier* n)
 	curl_global_cleanup();
 }
 
-typedef struct string_buffer {
-	char str[256];
-	size_t len;
-} string_buffer;
-
 static size_t write_func(void* contents, size_t size, size_t nmemb, void* userp) {
 	const size_t sz = size * nmemb;
 	if (sz == 0) { return sz; }
 
 	string_buffer* buf = userp;
 
-	// Copy as many bytes as we can
-	size_t cpy = sz;
-	if (buf->len + sz + 1 > sizeof(buf->str)) {
-		cpy = sizeof(buf->str) - 1 - buf->len;
-	}
-
-	memcpy(&buf->str[buf->len], contents, cpy);
-	buf->len += cpy;
-	buf->str[buf->len] = '\0';
-
-	return cpy;
+	return string_buffer_append(buf, contents, sz) ? sz : 0;
 }
 
 static void quick_formadds(struct curl_httppost** frm, struct curl_httppost** lp, const char* key, const char* val) {
@@ -130,7 +116,9 @@ enum notifier_result notifier_send(notifier* n, struct ProcParseLoadAvg* avg,
 	curl_easy_setopt(n->curl, CURLOPT_HTTPPOST, formpost);
 	curl_easy_setopt(n->curl, CURLOPT_USERAGENT, "uptimed http://github.com/nibroc/UptimeMonitor/");
 
-	string_buffer rs = {0};
+	string_buffer rs;
+	string_buffer_init(&rs);
+
 	curl_easy_setopt(n->curl, CURLOPT_WRITEFUNCTION, &write_func);
 	curl_easy_setopt(n->curl, CURLOPT_WRITEDATA, &rs);
 
@@ -138,9 +126,15 @@ enum notifier_result notifier_send(notifier* n, struct ProcParseLoadAvg* avg,
 
 	curl_formfree(formpost);
 
+	enum notifier_result result;
+
 	if (res == CURLE_OK) {
-		return strcmp(rs.str, "ok") ? NOTIFIER_SUCCESS : NOTIFIER_ERR_RESPONSE;
+		result = strcmp(string_buffer_get(&rs), "ok") ? NOTIFIER_SUCCESS : NOTIFIER_ERR_RESPONSE;
 	} else {
-		return NOTIFIER_ERR_CONNECTION;
+		result = NOTIFIER_ERR_CONNECTION;
 	}
+
+	string_buffer_cleanup(&rs);
+
+	return result;
 }
