@@ -40,6 +40,7 @@ static bool string_buffer_reserve(StringBuffer* s, size_t min_cap) {
 		return false;
 	}
 
+	// If we're moving from small_str to a buffer, we need to copy over the small_str.
 	if (s->str == NULL) {
 		memcpy(new_buf, s->small_str, sizeof(s->small_str));
 	}
@@ -60,6 +61,7 @@ bool string_buffer_set_bytes(StringBuffer* s, const char* str, size_t len) {
 	s->len = len;
 	return true;
 }
+
 bool string_buffer_set_cstr(StringBuffer* s, const char* str) {
 	return string_buffer_set_bytes(s, str, strlen(str));
 }
