@@ -103,10 +103,6 @@ int main(int argc, char** argv) {
 			print_uptime_info(stdout, host, &up, &mem, &avg);
 		}
 
-		if (count != -1) {
-			--count;
-		}
-
 		struct timespec start, end;
 
 		clock_gettime(CLOCK_MONOTONIC, &start);
@@ -115,7 +111,7 @@ int main(int argc, char** argv) {
 		}
 		clock_gettime(CLOCK_MONOTONIC, &end);
 
-		if (count == 0) {
+		if (count != -1 && --count == 0) {
 			break;
 		}
 
