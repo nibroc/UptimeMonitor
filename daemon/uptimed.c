@@ -89,12 +89,11 @@ program_options parse_args(int argc, char** argv) {
 int main(int argc, char** argv) {
 	program_options opts = parse_args(argc, argv);
 
-	char host[256];
-	do_or_die(procparse_hostname(host, sizeof(host)), "Could not read hostname");
-
 	Notifier* notify = notifier_create(opts.url);
 
 	do {
+		char host[256];
+		do_or_die(procparse_hostname(host, sizeof(host)), "Could not read hostname");
 		struct ProcParseUptime up;
 		do_or_die(procparse_uptime(&up), "Could not get uptime");
 		struct ProcParseMemInfo mem;
