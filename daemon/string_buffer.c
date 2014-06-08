@@ -3,32 +3,32 @@
 #include <stdlib.h>
 #include <string.h>
 
-void string_buffer_init(string_buffer* s) {
+void string_buffer_init(StringBuffer* s) {
 	s->small_str[0] = '\0';
 	s->str = NULL;
 	s->len = 0;
 	s->cap = sizeof(s->small_str);
 }
 
-void string_buffer_cleanup(string_buffer* s) {
+void string_buffer_cleanup(StringBuffer* s) {
 	free(s->str);
 	s->len = 0;
 	s->cap = sizeof(s->small_str);
 }
 
-const char* string_buffer_get(const string_buffer* s) {
+const char* string_buffer_get(const StringBuffer* s) {
 	return (s->cap <= sizeof(s->small_str)) ? s->small_str : s->str;
 }
 
-static char* string_buffer_buf(string_buffer* s) {
+static char* string_buffer_buf(StringBuffer* s) {
 	return (char*) string_buffer_get(s);
 }
 
-size_t string_buffer_len(const string_buffer* s) {
+size_t string_buffer_len(const StringBuffer* s) {
 	return s->len;
 }
 
-bool string_buffer_reserve(string_buffer* s, size_t min_cap) {
+bool string_buffer_reserve(StringBuffer* s, size_t min_cap) {
 	if (s->cap >= min_cap) {
 		return true;
 	}
@@ -48,7 +48,7 @@ bool string_buffer_reserve(string_buffer* s, size_t min_cap) {
 	return true;
 }
 
-bool string_buffer_set(string_buffer* s, const char* str, size_t len) {
+bool string_buffer_set(StringBuffer* s, const char* str, size_t len) {
 	if (!string_buffer_reserve(s, len + 1)) {
 		return false;
 	}
@@ -58,15 +58,15 @@ bool string_buffer_set(string_buffer* s, const char* str, size_t len) {
 	s->len = len;
 	return true;
 }
-bool string_buffer_setc(string_buffer* s, const char* str) {
+bool string_buffer_setc(StringBuffer* s, const char* str) {
 	return string_buffer_set(s, str, strlen(str));
 }
 
-bool string_buffer_setb(string_buffer* dst, const string_buffer* src) {
+bool string_buffer_setb(StringBuffer* dst, const StringBuffer* src) {
 	return string_buffer_set(dst, string_buffer_get(src), string_buffer_len(src));
 }
 
-bool string_buffer_append(string_buffer* s, const char* str, size_t len) {
+bool string_buffer_append(StringBuffer* s, const char* str, size_t len) {
 	if (!string_buffer_reserve(s, s->len + len + 1)) {
 		return false;
 	}
@@ -77,15 +77,15 @@ bool string_buffer_append(string_buffer* s, const char* str, size_t len) {
 	return true;
 }
 
-bool string_buffer_appendc(string_buffer* s, const char* str) {
+bool string_buffer_appendc(StringBuffer* s, const char* str) {
 	return string_buffer_append(s, str, strlen(str));
 }
 
-bool string_buffer_appendb(string_buffer* dst, const string_buffer* src) {
+bool string_buffer_appendb(StringBuffer* dst, const StringBuffer* src) {
 	return string_buffer_append(dst, string_buffer_get(src), string_buffer_len(src));
 }
 
-void string_buffer_clear(string_buffer* s) {
+void string_buffer_clear(StringBuffer* s) {
 	s->len = 0;
 	string_buffer_buf(s)[0] = '\0';
 }

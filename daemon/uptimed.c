@@ -92,7 +92,7 @@ int main(int argc, char** argv) {
 	char host[256];
 	do_or_die(procparse_hostname(host, sizeof(host)), "Could not read hostname");
 
-	notifier* notify = notifier_create(opts.url);
+	Notifier* notify = notifier_create(opts.url);
 
 	do {
 		struct ProcParseUptime up;

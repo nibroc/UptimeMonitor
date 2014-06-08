@@ -9,21 +9,21 @@ extern "C" {
 #include "procparse/meminfo.h"
 #include "procparse/uptime.h"
 
-typedef enum notifier_result {
+typedef enum NotifierResult {
 	NOTIFIER_SUCCESS = 0,
 	NOTIFIER_ERR_RESPONSE = 1,
 	NOTIFIER_ERR_CONNECTION = 2
-} notifier_result;
+} NotifierResult;
 
-typedef struct notifier notifier;
+typedef struct Notifier Notifier;
 
-notifier* notifier_create(const char* url);
+Notifier* notifier_create(const char* url);
 
-void notifier_destroy(notifier* n);
+void notifier_destroy(Notifier* n);
 
-const char* notifier_error(const notifier* n);
+const char* notifier_error(const Notifier* n);
 
-notifier_result notifier_send(notifier* n, const char* host, struct ProcParseLoadAvg* avg,
+NotifierResult notifier_send(Notifier* n, const char* host, struct ProcParseLoadAvg* avg,
 								struct ProcParseMemInfo* mem, struct ProcParseUptime* up);
 
 #ifdef	__cplusplus

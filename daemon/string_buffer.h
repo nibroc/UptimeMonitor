@@ -8,32 +8,32 @@ extern "C" {
 #include <stddef.h>
 #include <stdbool.h>
 
-typedef struct string_buffer {
+typedef struct StringBuffer {
 	char* str;
 	size_t len;
 	size_t cap;
 	char small_str[64];
-} string_buffer;
+} StringBuffer;
 
-void string_buffer_init(string_buffer* s);
+void string_buffer_init(StringBuffer* s);
 
-void string_buffer_cleanup(string_buffer* s);
+void string_buffer_cleanup(StringBuffer* s);
 
-const char* string_buffer_get(const string_buffer* s);
+const char* string_buffer_get(const StringBuffer* s);
 
-size_t string_buffer_len(const string_buffer* s);
+size_t string_buffer_len(const StringBuffer* s);
 
-bool string_buffer_set(string_buffer* s, const char* str, size_t len);
-bool string_buffer_setc(string_buffer* s, const char* str);
-bool string_buffer_setb(string_buffer* dst, const string_buffer* src);
+bool string_buffer_set(StringBuffer* s, const char* str, size_t len);
+bool string_buffer_setc(StringBuffer* s, const char* str);
+bool string_buffer_setb(StringBuffer* dst, const StringBuffer* src);
 
-bool string_buffer_append(string_buffer* s, const char* str, size_t len);
-bool string_buffer_appendc(string_buffer* s, const char* str);
-bool string_buffer_appendb(string_buffer* dst, const string_buffer* src);
+bool string_buffer_append(StringBuffer* s, const char* str, size_t len);
+bool string_buffer_appendc(StringBuffer* s, const char* str);
+bool string_buffer_appendb(StringBuffer* dst, const StringBuffer* src);
 
-bool string_buffer_reserve(string_buffer* s, size_t min_cap);
+bool string_buffer_reserve(StringBuffer* s, size_t min_cap);
 
-void string_buffer_clear(string_buffer* s);
+void string_buffer_clear(StringBuffer* s);
 
 #ifdef	__cplusplus
 }

@@ -6,22 +6,22 @@
 #include <stdlib.h>
 #include <string.h>
 
-typedef struct notifier {
+typedef struct Notifier {
 	char* url;
 	CURL* curl;
 	int notif_sent;
 	int notif_successful;
-	notifier_result last_result;
-	string_buffer last_error;
-} notifier;
+	NotifierResult last_result;
+	StringBuffer last_error;
+} Notifier;
 
-notifier* notifier_create(const char* url)
+Notifier* notifier_create(const char* url)
 {
 	if (url == NULL) {
 		return NULL;
 	}
 
-	notifier* n = malloc(sizeof(*n));
+	Notifier* n = malloc(sizeof(*n));
 
 	if (n == NULL) {
 		return NULL;
@@ -54,7 +54,7 @@ notifier* notifier_create(const char* url)
 	return n;
 }
 
-void notifier_destroy(notifier* n)
+void notifier_destroy(Notifier* n)
 {
 	if (n == NULL) { return; }
 
@@ -75,7 +75,7 @@ static size_t write_func(void* contents, size_t size, size_t nmemb, void* userp)
 	const size_t sz = size * nmemb;
 	if (sz == 0) { return sz; }
 
-	string_buffer* buf = userp;
+	StringBuffer* buf = userp;
 
 	return string_buffer_append(buf, contents, sz) ? sz : 0;
 }
@@ -113,7 +113,7 @@ static struct curl_httppost* build_form(const char* host, const struct ProcParse
 	return formpost;
 }
 
-enum notifier_result notifier_send(notifier* n, const char* host, struct ProcParseLoadAvg* avg,
+enum NotifierResult notifier_send(Notifier* n, const char* host, struct ProcParseLoadAvg* avg,
 					struct ProcParseMemInfo* mem, struct ProcParseUptime* up)
 {
 	struct curl_httppost* formpost = build_form(host, up, mem, avg);
@@ -122,7 +122,7 @@ enum notifier_result notifier_send(notifier* n, const char* host, struct ProcPar
 	curl_easy_setopt(n->curl, CURLOPT_HTTPPOST, formpost);
 	curl_easy_setopt(n->curl, CURLOPT_USERAGENT, "uptimed http://github.com/nibroc/UptimeMonitor/");
 
-	string_buffer rs;
+	StringBuffer rs;
 	string_buffer_init(&rs);
 
 	curl_easy_setopt(n->curl, CURLOPT_WRITEFUNCTION, &write_func);
@@ -132,7 +132,7 @@ enum notifier_result notifier_send(notifier* n, const char* host, struct ProcPar
 
 	curl_formfree(formpost);
 
-	enum notifier_result result;
+	enum NotifierResult result;
 
 	if (res == CURLE_OK) {
 		if (strcmp(string_buffer_get(&rs), "ok") == 0) {
@@ -153,6 +153,6 @@ enum notifier_result notifier_send(notifier* n, const char* host, struct ProcPar
 	return result;
 }
 
-const char* notifier_error(const notifier* n) {
+const char* notifier_error(const Notifier* n) {
 	return string_buffer_get(&n->last_error);
 }
