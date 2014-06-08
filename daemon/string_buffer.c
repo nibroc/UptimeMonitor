@@ -24,11 +24,13 @@ static char* string_buffer_buf(StringBuffer* s) {
 	return (char*) string_buffer_cstr(s);
 }
 
-size_t string_buffer_len(const StringBuffer* s) {
+size_t string_buffer_length(const StringBuffer* s) {
 	return s->len;
 }
 
-bool string_buffer_reserve(StringBuffer* s, size_t min_cap) {
+// Currently this is a hidden function, but if ever necessitated, it can be
+// exposed in the interface.
+static bool string_buffer_reserve(StringBuffer* s, size_t min_cap) {
 	if (s->cap >= min_cap) {
 		return true;
 	}
@@ -48,7 +50,7 @@ bool string_buffer_reserve(StringBuffer* s, size_t min_cap) {
 	return true;
 }
 
-bool string_buffer_set(StringBuffer* s, const char* str, size_t len) {
+bool string_buffer_set_bytes(StringBuffer* s, const char* str, size_t len) {
 	if (!string_buffer_reserve(s, len + 1)) {
 		return false;
 	}
@@ -58,15 +60,15 @@ bool string_buffer_set(StringBuffer* s, const char* str, size_t len) {
 	s->len = len;
 	return true;
 }
-bool string_buffer_setc(StringBuffer* s, const char* str) {
-	return string_buffer_set(s, str, strlen(str));
+bool string_buffer_set_cstr(StringBuffer* s, const char* str) {
+	return string_buffer_set_bytes(s, str, strlen(str));
 }
 
-bool string_buffer_setb(StringBuffer* dst, const StringBuffer* src) {
-	return string_buffer_set(dst, string_buffer_cstr(src), string_buffer_len(src));
+bool string_buffer_set_string_buffer(StringBuffer* dst, const StringBuffer* src) {
+	return string_buffer_set_bytes(dst, string_buffer_cstr(src), string_buffer_length(src));
 }
 
-bool string_buffer_append(StringBuffer* s, const char* str, size_t len) {
+bool string_buffer_append_bytes(StringBuffer* s, const char* str, size_t len) {
 	if (!string_buffer_reserve(s, s->len + len + 1)) {
 		return false;
 	}
@@ -77,12 +79,12 @@ bool string_buffer_append(StringBuffer* s, const char* str, size_t len) {
 	return true;
 }
 
-bool string_buffer_appendc(StringBuffer* s, const char* str) {
-	return string_buffer_append(s, str, strlen(str));
+bool string_buffer_append_cstr(StringBuffer* s, const char* str) {
+	return string_buffer_append_bytes(s, str, strlen(str));
 }
 
-bool string_buffer_appendb(StringBuffer* dst, const StringBuffer* src) {
-	return string_buffer_append(dst, string_buffer_cstr(src), string_buffer_len(src));
+bool string_buffer_append_string_buffer(StringBuffer* dst, const StringBuffer* src) {
+	return string_buffer_append_bytes(dst, string_buffer_cstr(src), string_buffer_length(src));
 }
 
 void string_buffer_clear(StringBuffer* s) {

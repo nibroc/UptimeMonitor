@@ -77,7 +77,7 @@ static size_t write_func(void* contents, size_t size, size_t nmemb, void* userp)
 
 	StringBuffer* buf = userp;
 
-	return string_buffer_append(buf, contents, sz) ? sz : 0;
+	return string_buffer_append_bytes(buf, contents, sz) ? sz : 0;
 }
 
 static void quick_formadds(struct curl_httppost** frm, struct curl_httppost** lp, const char* key, const char* val) {
@@ -140,12 +140,12 @@ enum NotifierResult notifier_send(Notifier* n, const char* host, struct ProcPars
 			string_buffer_clear(&n->last_error);
 		} else {
 			result = NOTIFIER_ERR_RESPONSE;
-			string_buffer_setc(&n->last_error, "unexpected response from server: ");
-			string_buffer_appendb(&n->last_error, &rs);
+			string_buffer_set_cstr(&n->last_error, "unexpected response from server: ");
+			string_buffer_append_string_buffer(&n->last_error, &rs);
 		}
 	} else {
 		result = NOTIFIER_ERR_CONNECTION;
-		string_buffer_setc(&n->last_error, "error connecting to host");
+		string_buffer_set_cstr(&n->last_error, "error connecting to host");
 	}
 
 	string_buffer_cleanup(&rs);

@@ -21,17 +21,15 @@ void string_buffer_cleanup(StringBuffer* s);
 
 const char* string_buffer_cstr(const StringBuffer* s);
 
-size_t string_buffer_len(const StringBuffer* s);
+size_t string_buffer_length(const StringBuffer* s);
 
-bool string_buffer_set(StringBuffer* s, const char* str, size_t len);
-bool string_buffer_setc(StringBuffer* s, const char* str);
-bool string_buffer_setb(StringBuffer* dst, const StringBuffer* src);
+bool string_buffer_set_bytes(StringBuffer* s, const char* str, size_t len);
+bool string_buffer_set_cstr(StringBuffer* s, const char* str);
+bool string_buffer_set_string_buffer(StringBuffer* dst, const StringBuffer* src);
 
-bool string_buffer_append(StringBuffer* s, const char* str, size_t len);
-bool string_buffer_appendc(StringBuffer* s, const char* str);
-bool string_buffer_appendb(StringBuffer* dst, const StringBuffer* src);
-
-bool string_buffer_reserve(StringBuffer* s, size_t min_cap);
+bool string_buffer_append_bytes(StringBuffer* s, const char* str, size_t len);
+bool string_buffer_append_cstr(StringBuffer* s, const char* str);
+bool string_buffer_append_string_buffer(StringBuffer* dst, const StringBuffer* src);
 
 void string_buffer_clear(StringBuffer* s);
 
