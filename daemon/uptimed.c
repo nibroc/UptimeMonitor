@@ -41,55 +41,58 @@ void print_uptime_info(FILE* stream, const char* host, const struct ProcParseUpt
 	);
 }
 
-int main(int argc, char** argv) {
-	/* Count -1 means repeat forever */
-	int count = -1;
+typedef struct program_options {
+	int repetitions;
+	int repeat_interval;
+	int silent;
+	char* url;
+} program_options;
 
-	/* Repeat every 180 seconds by default */
-	int repeat_seconds = 180;
-
-	int silent = 0;
-
-	char* url = NULL;
+program_options parse_args(int argc, char** argv) {
+	// By default, repeat forever, once every 3 minutes
+	program_options opts = {-1, 180};
 
 	int opt;
 	while (-1 != (opt = getopt(argc, argv, "t:svhr:i:"))) {
 		switch (opt) {
 			case 't':
-				url = optarg;
+				opts.url = optarg;
 				break;
 			case 'r':
-				count = atoi(optarg);
+				opts.repetitions = atoi(optarg);
 				break;
 			case 'i':
-				repeat_seconds = atoi(optarg);
+				opts.repeat_interval = atoi(optarg);
 				break;
 			case 's':
-				silent = 1;
+				opts.silent = 1;
 				break;
 			case 'v':
 				fputs(versionMessage, stderr);
-				return EXIT_SUCCESS;
+				exit(EXIT_SUCCESS);
 			case 'h':
 			default:
 				fputs(usageMessage, stderr);
-				return EXIT_SUCCESS;
+				exit(EXIT_SUCCESS);
 		}
 	}
 
-	if (url == NULL) {
+	if (opts.url == NULL) {
 		fprintf(stderr, "Error: You must provide the -t url option\n");
 		fprintf(stderr, "%s", usageMessage);
-		return EXIT_FAILURE;
+		exit(EXIT_FAILURE);
 	}
+
+	return opts;
+}
+
+int main(int argc, char** argv) {
+	program_options opts = parse_args(argc, argv);
 
 	char host[256];
-	if (procparse_hostname(host, sizeof(host))) {
-		fprintf(stderr, "Could not read hostname\n");
-		return EXIT_FAILURE;
-	}
+	do_or_die(procparse_hostname(host, sizeof(host)), "Could not read hostname");
 
-	notifier* notify = notifier_create(url);
+	notifier* notify = notifier_create(opts.url);
 
 	do {
 		struct ProcParseUptime up;
@@ -99,7 +102,7 @@ int main(int argc, char** argv) {
 		struct ProcParseLoadAvg avg;
 		do_or_die(procparse_loadavg(&avg), "could not get loadavg");
 
-		if (!silent) {
+		if (!opts.silent) {
 			print_uptime_info(stdout, host, &up, &mem, &avg);
 		}
 
@@ -111,13 +114,13 @@ int main(int argc, char** argv) {
 		}
 		clock_gettime(CLOCK_MONOTONIC, &end);
 
-		if (count != -1 && --count == 0) {
+		if (opts.repetitions != -1 && --opts.repetitions == 0) {
 			break;
 		}
 
 		double tdiff = ((double) (end.tv_sec - start.tv_sec)) + ( ((double)(end.tv_nsec - start.tv_nsec)) / 1000000000);
-		if (repeat_seconds > tdiff) {
-			usleep((repeat_seconds - tdiff) * 1000000 );
+		if (opts.repeat_interval > tdiff) {
+			usleep((opts.repeat_interval - tdiff) * 1000000 );
 		}
 	} while(1);
 
