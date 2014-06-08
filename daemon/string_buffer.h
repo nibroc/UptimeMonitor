@@ -25,9 +25,11 @@ size_t string_buffer_len(const string_buffer* s);
 
 bool string_buffer_set(string_buffer* s, const char* str, size_t len);
 bool string_buffer_setc(string_buffer* s, const char* str);
+bool string_buffer_setb(string_buffer* dst, const string_buffer* src);
 
 bool string_buffer_append(string_buffer* s, const char* str, size_t len);
 bool string_buffer_appendc(string_buffer* s, const char* str);
+bool string_buffer_appendb(string_buffer* dst, const string_buffer* src);
 
 bool string_buffer_reserve(string_buffer* s, size_t min_cap);
 

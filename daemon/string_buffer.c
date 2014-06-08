@@ -62,6 +62,10 @@ bool string_buffer_setc(string_buffer* s, const char* str) {
 	return string_buffer_set(s, str, strlen(str));
 }
 
+bool string_buffer_setb(string_buffer* dst, const string_buffer* src) {
+	return string_buffer_set(dst, string_buffer_get(src), string_buffer_len(src));
+}
+
 bool string_buffer_append(string_buffer* s, const char* str, size_t len) {
 	if (!string_buffer_reserve(s, s->len + len + 1)) {
 		return false;
@@ -75,6 +79,10 @@ bool string_buffer_append(string_buffer* s, const char* str, size_t len) {
 
 bool string_buffer_appendc(string_buffer* s, const char* str) {
 	return string_buffer_append(s, str, strlen(str));
+}
+
+bool string_buffer_appendb(string_buffer* dst, const string_buffer* src) {
+	return string_buffer_append(dst, string_buffer_get(src), string_buffer_len(src));
 }
 
 void string_buffer_clear(string_buffer* s) {

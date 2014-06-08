@@ -31,6 +31,16 @@ void do_or_die(int result, char* msg) {
 	exit(EXIT_FAILURE);
 }
 
+void print_uptime_info(FILE* stream, const char* host, const struct ProcParseUptime* up,
+						const struct ProcParseMemInfo* mem, const struct ProcParseLoadAvg* avg) {
+	fprintf(stream, "%s %.0f/%.0f %d/%d %.2f %.2f %.2f %d/%d\n",
+		host, up->total, up->idle,
+		mem->free, mem->total,
+		avg->load1, avg->load5, avg->load15,
+		avg->runningProcs, avg->totalProcs
+	);
+}
+
 int main(int argc, char** argv) {
 	/* Count -1 means repeat forever */
 	int count = -1;
@@ -90,13 +100,7 @@ int main(int argc, char** argv) {
 		do_or_die(procparse_loadavg(&avg), "could not get loadavg");
 
 		if (!silent) {
-			printf(
-				"%s %.0f/%.0f %d/%d %.2f %.2f %.2f %d/%d\n",
-				host, up.total, up.idle,
-				mem.free, mem.total,
-				avg.load1, avg.load5, avg.load15,
-				avg.runningProcs, avg.totalProcs
-			);
+			print_uptime_info(stdout, host, &up, &mem, &avg);
 		}
 
 		if (count != -1) {
@@ -106,9 +110,9 @@ int main(int argc, char** argv) {
 		struct timespec start, end;
 
 		clock_gettime(CLOCK_MONOTONIC, &start);
-
-		notifier_send(notify, &avg, &mem, &up);
-
+		if (notifier_send(notify, host, &avg, &mem, &up) != NOTIFIER_SUCCESS) {
+			fprintf(stderr, "%s\n", notifier_error(notify));
+		}
 		clock_gettime(CLOCK_MONOTONIC, &end);
 
 		if (count == 0) {

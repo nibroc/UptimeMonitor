@@ -11,6 +11,8 @@ typedef struct notifier {
 	CURL* curl;
 	int notif_sent;
 	int notif_successful;
+	notifier_result last_result;
+	string_buffer last_error;
 } notifier;
 
 notifier* notifier_create(const char* url)
@@ -47,6 +49,8 @@ notifier* notifier_create(const char* url)
 		return NULL;
 	}
 
+	string_buffer_init(&n->last_error);
+
 	return n;
 }
 
@@ -59,6 +63,8 @@ void notifier_destroy(notifier* n)
 
 	curl_easy_cleanup(n->curl);
 	n->curl = NULL;
+
+	string_buffer_cleanup(&n->last_error);
 
 	free(n);
 
@@ -107,10 +113,10 @@ static struct curl_httppost* build_form(const char* host, const struct ProcParse
 	return formpost;
 }
 
-enum notifier_result notifier_send(notifier* n, struct ProcParseLoadAvg* avg,
+enum notifier_result notifier_send(notifier* n, const char* host, struct ProcParseLoadAvg* avg,
 					struct ProcParseMemInfo* mem, struct ProcParseUptime* up)
 {
-	struct curl_httppost* formpost = build_form(n->url, up, mem, avg);
+	struct curl_httppost* formpost = build_form(host, up, mem, avg);
 
 	curl_easy_setopt(n->curl, CURLOPT_URL, n->url);
 	curl_easy_setopt(n->curl, CURLOPT_HTTPPOST, formpost);
@@ -129,12 +135,24 @@ enum notifier_result notifier_send(notifier* n, struct ProcParseLoadAvg* avg,
 	enum notifier_result result;
 
 	if (res == CURLE_OK) {
-		result = strcmp(string_buffer_get(&rs), "ok") ? NOTIFIER_SUCCESS : NOTIFIER_ERR_RESPONSE;
+		if (strcmp(string_buffer_get(&rs), "ok") == 0) {
+			result = NOTIFIER_SUCCESS;
+			string_buffer_clear(&n->last_error);
+		} else {
+			result = NOTIFIER_ERR_RESPONSE;
+			string_buffer_setc(&n->last_error, "unexpected response from server: ");
+			string_buffer_appendb(&n->last_error, &rs);
+		}
 	} else {
 		result = NOTIFIER_ERR_CONNECTION;
+		string_buffer_setc(&n->last_error, "error connecting to host");
 	}
 
 	string_buffer_cleanup(&rs);
 
 	return result;
+}
+
+const char* notifier_error(const notifier* n) {
+	return string_buffer_get(&n->last_error);
 }
