@@ -23,7 +23,7 @@ const char usageMessage[] =
 	"  -i int -- the time to pause before shooting off another request\n"
 	"  -s -- suppress messages\n";
 
-const char versionMessage[] = "uptimed version 0.1 by Corbin Hughes (http://github.com/nibroc/)\n";
+const char versionMessage[] = "uptimed version 0.2 by Corbin Hughes (http://github.com/nibroc/)\n";
 
 void do_or_die(int result, char* msg) {
 	if (!result) { return; }
