@@ -135,7 +135,7 @@ enum NotifierResult notifier_send(Notifier* n, const char* host, struct ProcPars
 	enum NotifierResult result;
 
 	if (res == CURLE_OK) {
-		if (strcmp(string_buffer_get(&rs), "ok") == 0) {
+		if (strcmp(string_buffer_cstr(&rs), "ok") == 0) {
 			result = NOTIFIER_SUCCESS;
 			string_buffer_clear(&n->last_error);
 		} else {
@@ -154,5 +154,5 @@ enum NotifierResult notifier_send(Notifier* n, const char* host, struct ProcPars
 }
 
 const char* notifier_error(const Notifier* n) {
-	return string_buffer_get(&n->last_error);
+	return string_buffer_cstr(&n->last_error);
 }

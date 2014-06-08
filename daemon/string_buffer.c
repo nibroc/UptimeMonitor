@@ -16,12 +16,12 @@ void string_buffer_cleanup(StringBuffer* s) {
 	s->cap = sizeof(s->small_str);
 }
 
-const char* string_buffer_get(const StringBuffer* s) {
+const char* string_buffer_cstr(const StringBuffer* s) {
 	return (s->cap <= sizeof(s->small_str)) ? s->small_str : s->str;
 }
 
 static char* string_buffer_buf(StringBuffer* s) {
-	return (char*) string_buffer_get(s);
+	return (char*) string_buffer_cstr(s);
 }
 
 size_t string_buffer_len(const StringBuffer* s) {
@@ -63,7 +63,7 @@ bool string_buffer_setc(StringBuffer* s, const char* str) {
 }
 
 bool string_buffer_setb(StringBuffer* dst, const StringBuffer* src) {
-	return string_buffer_set(dst, string_buffer_get(src), string_buffer_len(src));
+	return string_buffer_set(dst, string_buffer_cstr(src), string_buffer_len(src));
 }
 
 bool string_buffer_append(StringBuffer* s, const char* str, size_t len) {
@@ -82,7 +82,7 @@ bool string_buffer_appendc(StringBuffer* s, const char* str) {
 }
 
 bool string_buffer_appendb(StringBuffer* dst, const StringBuffer* src) {
-	return string_buffer_append(dst, string_buffer_get(src), string_buffer_len(src));
+	return string_buffer_append(dst, string_buffer_cstr(src), string_buffer_len(src));
 }
 
 void string_buffer_clear(StringBuffer* s) {

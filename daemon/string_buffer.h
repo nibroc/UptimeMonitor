@@ -19,7 +19,7 @@ void string_buffer_init(StringBuffer* s);
 
 void string_buffer_cleanup(StringBuffer* s);
 
-const char* string_buffer_get(const StringBuffer* s);
+const char* string_buffer_cstr(const StringBuffer* s);
 
 size_t string_buffer_len(const StringBuffer* s);
 
