@@ -41,16 +41,16 @@ void print_uptime_info(FILE* stream, const char* host, const struct ProcParseUpt
 	);
 }
 
-typedef struct program_options {
+typedef struct ProgramOptions {
 	int repetitions;
 	int repeat_interval;
 	int silent;
 	char* url;
-} program_options;
+} ProgramOptions;
 
-program_options parse_args(int argc, char** argv) {
+ProgramOptions parse_args(int argc, char** argv) {
 	// By default, repeat forever, once every 3 minutes
-	program_options opts = {-1, 180};
+	ProgramOptions opts = {-1, 180};
 
 	int opt;
 	while (-1 != (opt = getopt(argc, argv, "t:svhr:i:"))) {
@@ -87,7 +87,7 @@ program_options parse_args(int argc, char** argv) {
 }
 
 int main(int argc, char** argv) {
-	program_options opts = parse_args(argc, argv);
+	ProgramOptions opts = parse_args(argc, argv);
 
 	Notifier* notify = notifier_create(opts.url);
 
