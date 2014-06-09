@@ -12,6 +12,7 @@ void string_buffer_init(StringBuffer* s) {
 
 void string_buffer_cleanup(StringBuffer* s) {
 	free(s->str);
+	s->str = NULL;
 	s->len = 0;
 	s->cap = sizeof(s->small_str);
 }
