@@ -29,4 +29,7 @@ clean:
 dist-clean: clean
 	$(RM) *~ .dependtool
 
+docs:
+	doxygen doxygen.conf
+
 include .depend

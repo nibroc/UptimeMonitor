@@ -26,3 +26,6 @@
 
 # IDE Workspaces
 nbproject
+
+# generated files
+/daemon/doc/
