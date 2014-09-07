@@ -6,12 +6,13 @@
 #include "procparse/meminfo.h"
 #include "procparse/hostname.h"
 
-#include <stdio.h>
+#include <climits>
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
+#include <ctime>
+
 #include <unistd.h>
-#include <limits.h>
-#include <stdlib.h>
-#include <string.h>
-#include <time.h>
 #include <getopt.h>
 
 const char usageMessage[] =
@@ -27,13 +28,13 @@ const char versionMessage[] = "uptimed version 0.2 by Corbin Hughes (http://gith
 
 void do_or_die(enum procparse_result result, const char* msg) {
 	if (!result) { return; }
-	fprintf(stderr, "Error: %s -- %s\n", msg, procparse_strerr(result));
+	std::fprintf(stderr, "Error: %s -- %s\n", msg, procparse_strerr(result));
 	exit(EXIT_FAILURE);
 }
 
 void print_uptime_info(FILE* stream, const char* host, const struct ProcParseUptime* up,
 						const struct ProcParseMemInfo* mem, const struct ProcParseLoadAvg* avg) {
-	fprintf(stream, "%s %.0f/%.0f %d/%d %.2f %.2f %.2f %d/%d\n",
+	std::fprintf(stream, "%s %.0f/%.0f %d/%d %.2f %.2f %.2f %d/%d\n",
 		host, up->total, up->idle,
 		mem->free, mem->total,
 		avg->load1, avg->load5, avg->load15,
@@ -68,19 +69,19 @@ ProgramOptions parse_args(int argc, char** argv) {
 				opts.silent = 1;
 				break;
 			case 'v':
-				fputs(versionMessage, stderr);
+				std::fputs(versionMessage, stderr);
 				exit(EXIT_SUCCESS);
 			case 'h':
 			default:
-				fputs(usageMessage, stderr);
-				exit(EXIT_SUCCESS);
+				std::fputs(usageMessage, stderr);
+				std::exit(EXIT_SUCCESS);
 		}
 	}
 
 	if (opts.url == NULL) {
-		fprintf(stderr, "Error: You must provide the -t url option\n");
-		fprintf(stderr, "%s", usageMessage);
-		exit(EXIT_FAILURE);
+		std::fprintf(stderr, "Error: You must provide the -t url option\n");
+		std::fprintf(stderr, "%s", usageMessage);
+		std::exit(EXIT_FAILURE);
 	}
 
 	return opts;
@@ -109,7 +110,7 @@ int main(int argc, char** argv) {
 
 		clock_gettime(CLOCK_MONOTONIC, &start);
 		if (notifier_send(notify, host, &avg, &mem, &up) != NOTIFIER_SUCCESS) {
-			fprintf(stderr, "%s\n", notifier_error(notify));
+			std::fprintf(stderr, "%s\n", notifier_error(notify));
 		}
 		clock_gettime(CLOCK_MONOTONIC, &end);
 
