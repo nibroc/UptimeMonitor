@@ -21,7 +21,7 @@ Notifier* notifier_create(const char* url)
 		return NULL;
 	}
 
-	Notifier* n = malloc(sizeof(*n));
+	Notifier* n = static_cast<Notifier*>(malloc(sizeof(*n)));
 
 	if (n == NULL) {
 		return NULL;
@@ -75,9 +75,9 @@ static size_t write_func(void* contents, size_t size, size_t nmemb, void* userp)
 	const size_t sz = size * nmemb;
 	if (sz == 0) { return sz; }
 
-	StringBuffer* buf = userp;
+	StringBuffer* buf = static_cast<StringBuffer*>(userp);
 
-	return string_buffer_append_bytes(buf, contents, sz) ? sz : 0;
+	return string_buffer_append_bytes(buf, static_cast<char*>(contents), sz) ? sz : 0;
 }
 
 static void quick_formadds(struct curl_httppost** frm, struct curl_httppost** lp, const char* key, const char* val) {

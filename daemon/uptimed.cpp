@@ -25,7 +25,7 @@ const char usageMessage[] =
 
 const char versionMessage[] = "uptimed version 0.2 by Corbin Hughes (http://github.com/nibroc/)\n";
 
-void do_or_die(int result, char* msg) {
+void do_or_die(enum procparse_result result, const char* msg) {
 	if (!result) { return; }
 	fprintf(stderr, "Error: %s -- %s\n", msg, procparse_strerr(result));
 	exit(EXIT_FAILURE);

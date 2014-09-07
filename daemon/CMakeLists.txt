@@ -12,9 +12,10 @@ set(CMAKE_BINARY_DIR ${CMAKE_SOURCE_DIR}/build)
 set(LIBRARY_OUTPUT_PATH ${CMAKE_BINARY_DIR})
 
 # Set compiler options
-set(CMAKE_CXX_FLAGS "-O3 -pedantic -std=gnu11 -Wall")
+set(CMAKE_C_FLAGS "-O3 -pedantic -std=gnu11 -Wall")
+set(CMAKE_CXX_FLAGS "-O3 -pedantic -std=c++11 -Wall")
 
-add_executable(uptimed uptimed.c notifier.c string_buffer.c)
+add_executable(uptimed uptimed.cpp notifier.cpp string_buffer.c)
 
 # Build procparse subproject
 add_subdirectory(procparse)
