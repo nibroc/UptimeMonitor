@@ -1,4 +1,4 @@
-#include "notifier.h"
+#include "notifier.hpp"
 
 #include <curl/curl.h>
 
@@ -7,43 +7,19 @@
 #include <string>
 #include <stdexcept>
 
-struct Notifier {
-	std::string url;
-	CURL* curl;
-	int notif_sent;
-	int notif_successful;
-	NotifierResult last_result;
-	std::string last_error;
-
-	Notifier(std::string url)
-		: url(std::move(url)), curl(nullptr), notif_sent(0), notif_successful(0),
-		  last_result(NOTIFIER_SUCCESS), last_error()
-	{
-		curl_global_init(CURL_GLOBAL_ALL);
-		curl = curl_easy_init();
-
-		if (curl == nullptr) {
-			throw std::runtime_error("Could not initialize curl");
-		}
-	}
-
-	Notifier& operator=(const Notifier&) = delete;
-	Notifier(const Notifier&) = delete;
-
-	~Notifier() {
-		curl_easy_cleanup(curl);
-		curl_global_cleanup();
-	}
-};
-
-Notifier* notifier_create(const char* url)
+Notifier::Notifier(std::string url)
+	: url(std::move(url)), curl(nullptr), notif_sent(0), notif_successful(0)
 {
-	return new (std::nothrow) Notifier(url);
+	curl_global_init(CURL_GLOBAL_ALL);
+	curl = curl_easy_init();
+	if (curl == nullptr) {
+		throw std::runtime_error("Could not initialize curl");
+	}
 }
 
-void notifier_destroy(Notifier* n)
-{
-	delete n;
+Notifier::~Notifier() {
+	curl_easy_cleanup(curl);
+	curl_global_cleanup();
 }
 
 static size_t write_func(void* contents, size_t size, size_t nmemb, void* userp) {
@@ -93,42 +69,34 @@ static curl_httppost* build_form(const char* host, const ProcParseUptime* up,
 	return formpost;
 }
 
-enum NotifierResult notifier_send(Notifier* n, const char* host, ProcParseLoadAvg* avg,
+NotifierResult Notifier::send(const char* host, ProcParseLoadAvg* avg,
 					ProcParseMemInfo* mem, ProcParseUptime* up)
 {
+	notif_sent += 1;
+
 	curl_httppost* formpost = build_form(host, up, mem, avg);
 
-	curl_easy_setopt(n->curl, CURLOPT_URL, n->url.c_str());
-	curl_easy_setopt(n->curl, CURLOPT_HTTPPOST, formpost);
-	curl_easy_setopt(n->curl, CURLOPT_USERAGENT, "uptimed http://github.com/nibroc/UptimeMonitor/");
+	curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
+	curl_easy_setopt(curl, CURLOPT_HTTPPOST, formpost);
+	curl_easy_setopt(curl, CURLOPT_USERAGENT, "uptimed http://github.com/nibroc/UptimeMonitor/");
 
 	std::string rs;
 
-	curl_easy_setopt(n->curl, CURLOPT_WRITEFUNCTION, &write_func);
-	curl_easy_setopt(n->curl, CURLOPT_WRITEDATA, &rs);
+	curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, &write_func);
+	curl_easy_setopt(curl, CURLOPT_WRITEDATA, &rs);
 
-	CURLcode res = curl_easy_perform(n->curl);
+	CURLcode res = curl_easy_perform(curl);
 
 	curl_formfree(formpost);
 
-	enum NotifierResult result;
-
 	if (res == CURLE_OK) {
 		if (rs == "ok") {
-			result = NOTIFIER_SUCCESS;
-			n->last_error.clear();
+			notif_successful += 1;
+			return NotifierResult(NotifierResult::ResultCode::SUCCESS);
 		} else {
-			result = NOTIFIER_ERR_RESPONSE;
-			n->last_error = "unexpected response from server: " + rs;
+			return NotifierResult(NotifierResult::ResultCode::ERR_RESPONSE, "unexpected response from server: " + rs);
 		}
 	} else {
-		result = NOTIFIER_ERR_CONNECTION;
-		n->last_error = "error connecting to host";
+		return NotifierResult(NotifierResult::ResultCode::ERR_CONNECTION, "error connecting to host");
 	}
-
-	return n->last_result = result;
-}
-
-const char* notifier_error(const Notifier* n) {
-	return n->last_error.c_str();
 }

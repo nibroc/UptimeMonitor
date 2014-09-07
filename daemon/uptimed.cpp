@@ -1,5 +1,4 @@
-#include "notifier.h"
-#include "string_buffer.h"
+#include "notifier.hpp"
 
 #include "procparse/uptime.h"
 #include "procparse/loadavg.h"
@@ -90,7 +89,7 @@ ProgramOptions parse_args(int argc, char** argv) {
 int main(int argc, char** argv) {
 	ProgramOptions opts = parse_args(argc, argv);
 
-	Notifier* notify = notifier_create(opts.url);
+	Notifier notify(opts.url);
 
 	do {
 		char host[256];
@@ -109,8 +108,10 @@ int main(int argc, char** argv) {
 		struct timespec start, end;
 
 		clock_gettime(CLOCK_MONOTONIC, &start);
-		if (notifier_send(notify, host, &avg, &mem, &up) != NOTIFIER_SUCCESS) {
-			std::fprintf(stderr, "%s\n", notifier_error(notify));
+
+		auto result = notify.send(host, &avg, &mem, &up);
+		if (result.is_failure()) {
+			std::fprintf(stderr, "%s\n", result.error_message().c_str());
 		}
 		clock_gettime(CLOCK_MONOTONIC, &end);
 
@@ -123,8 +124,6 @@ int main(int argc, char** argv) {
 			usleep((opts.repeat_interval - tdiff) * 1000000 );
 		}
 	} while(1);
-
-	notifier_destroy(notify);
 
 	return 0;
 }
