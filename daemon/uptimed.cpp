@@ -29,7 +29,7 @@ const char versionMessage[] = "uptimed version 0.2 by Corbin Hughes (http://gith
 static void do_or_die(enum procparse_result result, const char* msg) {
 	if (!result) { return; }
 	std::fprintf(stderr, "Error: %s -- %s\n", msg, procparse_strerr(result));
-	exit(EXIT_FAILURE);
+	std::exit(EXIT_FAILURE);
 }
 
 static void print_uptime_info(FILE* stream, const char* host, const struct ProcParseUptime* up,
@@ -60,17 +60,18 @@ static ProgramOptions parse_args(int argc, char** argv) {
 				opts.url = optarg;
 				break;
 			case 'r':
-				opts.repetitions = atoi(optarg);
+				opts.repetitions = std::atoi(optarg);
 				break;
 			case 'i':
-				opts.repeat_interval = atoi(optarg);
+				opts.repeat_interval = std::atoi(optarg);
 				break;
 			case 's':
 				opts.silent = true;
 				break;
 			case 'v':
 				std::fputs(versionMessage, stderr);
-				exit(EXIT_SUCCESS);
+				std::exit(EXIT_SUCCESS);
+				break;
 			case 'h':
 			default:
 				std::fputs(usageMessage, stderr);
