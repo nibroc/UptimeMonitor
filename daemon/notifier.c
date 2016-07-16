@@ -6,14 +6,14 @@
 #include <stdlib.h>
 #include <string.h>
 
-typedef struct Notifier {
+struct Notifier {
 	char* url;
 	CURL* curl;
 	int notif_sent;
 	int notif_successful;
 	NotifierResult last_result;
 	StringBuffer last_error;
-} Notifier;
+};
 
 Notifier* notifier_create(const char* url)
 {

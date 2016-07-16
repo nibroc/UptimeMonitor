@@ -1,4 +1,4 @@
-CFLAGS=-Wall -Wextra -pedantic -std=gnu11
+CFLAGS=-Wall -Wextra -pedantic -std=gnu99
 LDLIBS=-lcurl
 RM=rm -f
 
@@ -7,11 +7,11 @@ OBJS=$(subst .c,.o,$(SRCS))
 
 all: release
 
-release: CFLAGS=-O3
+release: CFLAGS += -O2
 release: build
 
-debug: CFLAGS=-O0 -g
-debug: LDFLAGS=-O0 -g
+debug: CFLAGS += -O0 -g
+debug: LDFLAGS += -O0 -g
 debug: build
 
 build: $(OBJS)

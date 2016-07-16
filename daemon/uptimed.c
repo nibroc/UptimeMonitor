@@ -50,7 +50,7 @@ typedef struct ProgramOptions {
 
 ProgramOptions parse_args(int argc, char** argv) {
 	// By default, repeat forever, once every 3 minutes
-	ProgramOptions opts = {-1, 180};
+	ProgramOptions opts = {-1, 180, 0, NULL};
 
 	int opt;
 	while (-1 != (opt = getopt(argc, argv, "t:svhr:i:"))) {
